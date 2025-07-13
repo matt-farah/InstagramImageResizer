@@ -1,4 +1,9 @@
 from PIL import Image, ImageOps
+import os
+
+folderToProcess = "/users/matt1125/Downloads/test"
+finalHeight = 1350
+finalWidth = 1080
 
 def process_image (input, output, targetWidth, targetHeight):
     # Load. the image
@@ -21,5 +26,14 @@ def process_image (input, output, targetWidth, targetHeight):
     canvas.save(output)
     print(f"Image saved to {output}")
 
+with os.scandir(folderToProcess) as files:
+    for file in files:
+        name = file.name
+        print("processing...", name)
+        filePath = folderToProcess + "/" + name
+        newFilePath = folderToProcess + "/" + "i_" + name
+        print(filePath,newFilePath,finalWidth,finalHeight)
+        process_image (filePath,newFilePath,finalWidth,finalHeight)
 
-process_image ("/Users/matt1125/Documents/Github/InstagramImageResizer/DSCF0462.JPG","/Users/matt1125/Documents/Github/InstagramImageResizer/Resized.jpg", 1080, 1350)
+
+# process_image ("/Users/matt1125/Documents/Github/InstagramImageResizer/DSCF0462.JPG","/Users/matt1125/Documents/Github/InstagramImageResizer/Resized.jpg", 1080, 1350)
