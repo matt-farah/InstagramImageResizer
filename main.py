@@ -2,12 +2,12 @@ from PIL import Image, ImageOps
 import os
 
 #set the folder path to process
-folderToProcess = "/users/matt1125/Downloads/test"
+folderToProcess = "/Users/matt1125/Library/CloudStorage/OneDrive-Personal/Film and digital/Instagram Posts/2025/20250713 Alien 1/a"
 #set the final image size
 finalHeight = 1350
 finalWidth = 1080
 #set the border size
-finalBorder = 0
+finalBorder = 10
 #set the background color
 finalCanvasR = 255
 finalCanvasG = 255
