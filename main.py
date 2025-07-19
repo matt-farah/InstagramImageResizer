@@ -2,7 +2,7 @@ from PIL import Image, ImageOps
 import os
 
 #set the folder path to process
-folderToProcess = "/Users/matt1125/Library/CloudStorage/OneDrive-Personal/Film and digital/Instagram Posts/2025/20250713 Alien 1/a"
+folderToProcess = "/Users/matt1125/Library/CloudStorage/OneDrive-Personal/Film and digital/Instagram Posts/2025/20250713 Alien 2/Final w Text"
 #set the final image size
 finalHeight = 1350
 finalWidth = 1080
