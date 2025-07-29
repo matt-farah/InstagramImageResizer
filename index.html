@@ -13,7 +13,13 @@
         <py-config>
         packages = ["pillow"]
         </py-config>
-        <label for="Upload a PNG image"></label><input type="file" id="file-upload-pillow">
+        <input type="radio" name="size_select" value="vertical">
+        <label for="vertical">Vertical 1080x1350</label><br>
+        <input type="radio" name="size_select" value="square">
+        <label for="vertical">Square 1080x1080</label><br>
+        <input type="radio" name="size_select" value="landscape">
+        <label for="vertical">Landscape 1080x566</label><br>
+        <label for="Upload a PNG image"></label><input type="file" id="file-upload-pillow" multiple>
         <div id="output_upload_pillow"></div>
         <script type="py" src="./webImpageProcess.py"></script>
 

@@ -18,47 +18,47 @@ async def _upload_change_and_show(e):
     from PIL import Image, ImageFilter
     #Get the first file from upload
     file_list = e.target.files
-    first_item = file_list.item(0)
+    #first_item = file_list.item(0)
+    for file in file_list:
+        #Get the data from the files arrayBuffer as an array of unsigned bytes
+        array_buf = Uint8Array.new(await file.arrayBuffer())
 
-    #Get the data from the files arrayBuffer as an array of unsigned bytes
-    array_buf = Uint8Array.new(await first_item.arrayBuffer())
+        #BytesIO wants a bytes-like object, so convert to bytearray first
+        bytes_list = bytearray(array_buf)
+        my_bytes = io.BytesIO(bytes_list) 
 
-    #BytesIO wants a bytes-like object, so convert to bytearray first
-    bytes_list = bytearray(array_buf)
-    my_bytes = io.BytesIO(bytes_list) 
+        #Create PIL image from np array
+        my_image = Image.open(my_bytes)
 
-    #Create PIL image from np array
-    my_image = Image.open(my_bytes)
+        #Log some of the image data for testing
+        console.log(f"{my_image.format= } {my_image.width= } {my_image.height= }")
 
-    #Log some of the image data for testing
-    console.log(f"{my_image.format= } {my_image.width= } {my_image.height= }")
+        # Now that we have the image loaded with PIL, we can use all the tools it makes available. 
+        # "Emboss" the image, rotate 45 degrees, fill with dark green
+        #my_image = my_image.filter(ImageFilter.EMBOSS).rotate(45, expand=True, fillcolor=(0,100,50)).resize((300,300))
+        #set the final image size
+        finalHeight = 1350
+        finalWidth = 1080
+        #set the border size
+        finalBorder = 10
+        #set the background color
+        finalCanvasR = 255
+        finalCanvasG = 255
+        finalCanvasB = 255
+        my_image = process_image(my_image,finalWidth,finalHeight,finalBorder,finalCanvasR,finalCanvasG,finalCanvasB)
 
-    # Now that we have the image loaded with PIL, we can use all the tools it makes available. 
-    # "Emboss" the image, rotate 45 degrees, fill with dark green
-    #my_image = my_image.filter(ImageFilter.EMBOSS).rotate(45, expand=True, fillcolor=(0,100,50)).resize((300,300))
-    #set the final image size
-    finalHeight = 1350
-    finalWidth = 1080
-    #set the border size
-    finalBorder = 10
-    #set the background color
-    finalCanvasR = 255
-    finalCanvasG = 255
-    finalCanvasB = 255
-    my_image = process_image(my_image,finalWidth,finalHeight,finalBorder,finalCanvasR,finalCanvasG,finalCanvasB)
+        #Convert Pillow object array back into File type that createObjectURL will take
+        my_stream = io.BytesIO()
+        my_image.save(my_stream, format="PNG")
 
-    #Convert Pillow object array back into File type that createObjectURL will take
-    my_stream = io.BytesIO()
-    my_image.save(my_stream, format="PNG")
+        #Create a JS File object with our data and the proper mime type
+        image_file = File.new([Uint8Array.new(my_stream.getvalue())], "new_image_file.png", {type: "image/png"})
+        console.log("Object URL:", window.URL.createObjectURL(image_file))
 
-    #Create a JS File object with our data and the proper mime type
-    image_file = File.new([Uint8Array.new(my_stream.getvalue())], "new_image_file.png", {type: "image/png"})
-    console.log("Object URL:", window.URL.createObjectURL(image_file))
-
-    #Create new tag and insert into page
-    new_image = document.createElement('img')
-    new_image.src = window.URL.createObjectURL(image_file)
-    document.getElementById("output_upload_pillow").appendChild(new_image)
+        #Create new tag and insert into page
+        new_image = document.createElement('img')
+        new_image.src = window.URL.createObjectURL(image_file)
+        document.getElementById("output_upload_pillow").appendChild(new_image)
 
 
 def process_image (input, targetWidth, targetHeight, borderSize, canvasR, canvasG, canvasB):
@@ -80,9 +80,7 @@ def process_image (input, targetWidth, targetHeight, borderSize, canvasR, canvas
     offset_y = (targetHeight - resizedImage.height) // 2
     canvas.paste (resizedImage, (offset_x, offset_y))
 
-    #canvas.save(output)
     return canvas
-    print(f"Image saved to {output}")
 
 # Run image processing code above whenever file is uploaded    
 upload_file = create_proxy(_upload_change_and_show)
