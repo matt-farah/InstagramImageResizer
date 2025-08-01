@@ -39,11 +39,17 @@ async def _upload_change_and_zip(file_input):
             else:
                 finalWidth, finalHeight = 1080, 1350
 
-            # Final image setup
-            finalBorder = 10
-            finalCanvasR, finalCanvasG, finalCanvasB = 255, 255, 255
-            final_image = process_image(my_image, finalWidth, finalHeight, finalBorder,
-                                        finalCanvasR, finalCanvasG, finalCanvasB)
+            # Get the border width and color
+            borderElement = document.getElementById("borderWidth")
+            finalBorder = int(borderElement.value)
+            selectedColor = document.getElementById("backColor")
+            hexColor = selectedColor.value
+
+            console.log("back color", hexColor)
+            console.log("border size", finalBorder)
+
+            finalCanvasR, finalCanvasG, finalCanvasB = hexToRGB(hexColor)
+            final_image = process_image(my_image, finalWidth, finalHeight, finalBorder, finalCanvasR, finalCanvasG, finalCanvasB)
 
             # Save processed image to zip buffer
             image_stream = io.BytesIO()
@@ -90,6 +96,10 @@ async def on_form_submit(e):
         console.log("No files selected")
         return
     await _upload_change_and_zip(file_input)
+
+def hexToRGB(hex_str):
+    hex_str = hex_str.lstrip("#")
+    return tuple(int(hex_str[i:i+2], 16) for i in (0, 2, 4))
 
 submit_proxy = create_proxy(on_form_submit)
 submit_form.addEventListener("submit", submit_proxy)

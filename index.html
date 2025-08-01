@@ -20,7 +20,11 @@
             <label for="vertical">Square 1080x1080</label><br>
             <input type="radio" name="size_select" value="landscape">
             <label for="vertical">Landscape 1080x566</label><br>
-            <label for="Upload an image or multiple images"></label><input type="file" id="file-upload-pillow" multiple>
+            <label for "borderWidth">Border Width in pixels:</label>
+            <input type="number" id="borderWidth" name="borderWidth" min="0" max="500" value="0"><br>
+            <label for"backColor">Select a Background Color</label>
+            <input type="color" id="backColor" name="backColor" value="#ffffff"><br>
+            <label for="Upload an image or multiple images"></label><input type="file" id="file-upload-pillow" multiple><br>
             <input type="submit" value="Submit">
         </form>
         <div id="output_upload_pillow"></div>
