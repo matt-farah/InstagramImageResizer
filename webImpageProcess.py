@@ -18,11 +18,13 @@ async def _upload_change_and_zip(file_input):
     from pyodide.ffi import to_js
 
     file_list = file_input.files
+    fileCount = file_input.files.length
     zip_stream = io.BytesIO()
 
     # Create an in-memory zip archive
     with zipfile.ZipFile(zip_stream, mode="w", compression=zipfile.ZIP_DEFLATED) as zipf:
         for index, file in enumerate(file_list):
+            document.getElementById("output_upload_pillow").replaceChildren("Processing ", index+1, " of ", fileCount)
             array_buf = Uint8Array.new(await file.arrayBuffer())
             my_bytes = io.BytesIO(bytearray(array_buf))
             my_image = Image.open(my_bytes)
@@ -66,7 +68,7 @@ async def _upload_change_and_zip(file_input):
     download_link.href = window.URL.createObjectURL(zip_file)
     download_link.download = "processed_images.zip"
     download_link.textContent = "Download processed images"
-    document.getElementById("output_upload_pillow").appendChild(download_link)
+    document.getElementById("output_upload_pillow").replaceChildren(download_link)
 
 
 # Resizing logic
