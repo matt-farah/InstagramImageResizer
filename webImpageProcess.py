@@ -38,6 +38,8 @@ async def _upload_change_and_zip(file_input):
                 finalWidth, finalHeight = 1080, 1080
             elif size_value == "landscape":
                 finalWidth, finalHeight = 1080, 566
+            elif size_value == "story":
+                finalWidth, finalHeight = 1080, 1920
             else:
                 finalWidth, finalHeight = 1080, 1350
 
