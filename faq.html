@@ -1,0 +1,99 @@
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Frequently Asked Questions</title>
+
+    <!-- Custom Styles -->
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #F0EBD8;
+            margin: 0;
+            padding: 0;
+        }
+
+        nav {
+            background-color: #1C2321;
+            padding: 1rem;
+            display: flex;
+            justify-content: center;
+        }
+
+        nav a {
+            color: #F0EBD8;
+            text-decoration: none;
+            margin: 0 1rem;
+            font-weight: bold;
+        }
+
+        nav a:hover {
+            text-decoration: underline;
+        }
+
+        .container {
+            padding: 2rem;
+            background-color: #62929E;
+            color: white;
+            border-radius: 8px;
+            max-width: 800px;
+            margin: 2rem auto;
+        }
+
+        label {
+            display: block;
+            margin-top: 1rem;
+        }
+
+        input[type="submit"] {
+            margin-top: 1rem;
+            background-color: #782B6B;
+            color: white;
+            border: none;
+            padding: 0.5rem 1rem;
+            cursor: pointer;
+        }
+
+        input[type="submit"]:hover {
+            background-color: #003a8c;
+        }
+    </style>
+</head>
+<body>
+    <!-- Navbar -->
+    <nav>
+        <a href="index.html">Home</a>
+        <a href="about.html">About</a>
+        <a href="faq.html">FAQ</a>
+    </nav>
+
+    <!-- Main Content -->
+    <div class="container">
+        <h1>Frequently Asked Questions:</h1>
+        <h2>What is Instagram Image Resizer?</h2>
+        <p>Instagram Image Resizer <a href = https://igimageresizer.com>igimageresizer.com</a> is a privacy-focused tool for resizing images to post to Instagram.</p>
+        <h2>How do I use the Instagram Image Resizer?</h2>
+        <ul>
+            <li>Select the desired size</li>
+            <li>Select a border size and background color if desired</li>
+            <li>Choose browse and add the images you wish to process</li>
+            <li>Select Submit</li>
+            <li>Your images will be processed locally and a zipped folder will be downloaded with the resulting images</li>
+        </ul>
+        <h2>Does the site work on mobile?</h2>
+        <p>While technically it does work on mobile, zipped files don't work well on phones. This is a future improvement that is planned for the site.</p>
+        <h2>What Image Formats are supported?</h2>
+        <p>Currently PNGs & JPGs can be processed and output will be JPG.</p>
+        <h2>When you say privacy-focused what do you mean?</h2>
+        <p>Although this is a web app, your images never leave your computer. All processing is done locally on your machine, and we never use your images as stock photos or to train AI.</p>
+        <h2>How is this software licensed?</h2>
+        <p>Instagram Image Resizer is an open-sourced software using the GNU General Public License v3.0. In summary, it can be used for anything, but attribution is required and the project must also be an open-sourced project. View our source code and more info about the project on <a href=https://github.com/matt-farah/InstagramImageResizer>Github</a></p>
+        <h2>Was AI used in the development of this project?</h2>
+        <p>Yes. This project was developed in part using code from Microsoft Copilot.</p>
+        <h2>What tech does this software use?</h2>
+        <p>This project uses HTML for the front end and Python for the back end processing using PyScript. The site is hosted in Microsoft Azure.</p>
+    </div>
+
+</body>
+</html>
