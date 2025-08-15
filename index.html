@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Styled Page</title>
+    <title>Instagram Image Resizer</title>
 
     <!-- PyScript CSS -->
     <link rel="stylesheet" href="https://pyscript.net/releases/2024.5.2/core.css">
@@ -74,21 +74,23 @@
 
     <!-- Main Content -->
     <div class="container">
+        <h2>Instagram Image Resizer</h2>
+        <h4>1. Select your target size:</h4>
         <form action="" onsubmit="return false;">
             <label><input type="radio" name="size_select" value="vertical" checked> Vertical 1080x1350</label>
             <label><input type="radio" name="size_select" value="square"> Square 1080x1080</label>
             <label><input type="radio" name="size_select" value="landscape"> Landscape 1080x566</label>
             <label><input type="radio" name="size_select" value="story"> Story 1080x1920</label>
-            <hr style = "background-color:invisible; height:1px">
+        <h4>2. Select your Border Width and background color:</h4>
             <label for="borderWidth">Border Width in pixels:</label>
             <input type="number" id="borderWidth" name="borderWidth" min="0" max="500" value="0">
 
             <label for="backColor">Select a Background Color:</label>
             <input type="color" id="backColor" name="backColor" value="#ffffff">
-
-            <label for="file-upload-pillow">Upload an image or multiple images:</label>
-            <input type="file" id="file-upload-pillow" multiple>
-
+        <h4>3. Pick your image(s):</h4>
+            <label for="file-upload-pillow">Select an image or multiple images:</label>
+            <input type="file" id="file-upload-pillow" multiple accept="image/png, image/jpeg">
+        <h4>4. Click Submit!</h4>
             <input type="submit" value="Submit">
         </form>
 
