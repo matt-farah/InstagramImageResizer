@@ -19,6 +19,43 @@
         <a href="faq.html">FAQ</a>
     </nav>
 
+    <!-- Install Locally Option --> 
+    <button id="install-btn" style="display:none;">Install App</button>
+    <p id="status">Waiting for install...</p>
+
+    <script>
+        let deferredPrompt;
+
+        window.addEventListener('beforeinstallprompt', (e) => {
+        e.preventDefault();
+        deferredPrompt = e;
+        document.getElementById('install-btn').style.display = 'block';
+
+        document.getElementById('install-btn').addEventListener('click', async () => {
+            deferredPrompt.prompt();
+            const choiceResult = await deferredPrompt.userChoice;
+            if (choiceResult.outcome === 'accepted') {
+            console.log('User accepted install');
+            }
+            deferredPrompt = null;
+        });
+        });
+
+        window.addEventListener('appinstalled', () => {
+        console.log('App installed');
+        if (window.triggerPyInstall) window.triggerPyInstall();
+        });
+
+        // Safari standalone mode detection
+        if (window.navigator.standalone || window.matchMedia('(display-mode: standalone)').matches) {
+        console.log('Running in standalone mode');
+        window.addEventListener('load', () => {
+            if (window.triggerPyInstall) window.triggerPyInstall();
+        });
+        }
+    </script>
+
+
     <!-- Main Content -->
     <div class="container">
         <h2>Instagram Photo Resizer</h2>
