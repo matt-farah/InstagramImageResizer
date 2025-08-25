@@ -1,4 +1,4 @@
-from js import document, console, Uint8Array, window, File
+from js import document, console, Uint8Array, window, File, navigator, Blob, URL
 from pyodide.ffi import create_proxy
 import io
 import asyncio
@@ -28,58 +28,99 @@ async def _upload_change_and_zip(file_input):
 
     file_list = file_input.files
     fileCount = file_input.files.length
-    zip_stream = io.BytesIO()
+    user_agent = navigator.userAgent
+    is_mobile = any(keyword in user_agent for keyword in ["Mobi", "Android", "iPhone", "iPad", "iPod"])
 
-    # Create an in-memory zip archive
-    with zipfile.ZipFile(zip_stream, mode="w", compression=zipfile.ZIP_DEFLATED) as zipf:
+
+    output = document.getElementById("output_upload_pillow")
+    output.replaceChildren("Processing...")
+
+
+    if not is_mobile:
+        zip_stream = io.BytesIO()
+
+        # Create an in-memory zip archive
+        with zipfile.ZipFile(zip_stream, mode="w", compression=zipfile.ZIP_DEFLATED) as zipf:
+            for index, file in enumerate(file_list):
+                document.getElementById("output_upload_pillow").replaceChildren("Processing ", index+1, " of ", fileCount)
+                # Save processed image to zip buffer
+                final_image = await process_and_resize(file, index)
+                # Save processed image to zip buffer
+                image_stream = io.BytesIO()
+                final_image.save(image_stream, format="PNG")
+                image_name = f"processed_image_{index+1}.png"
+                zipf.writestr(image_name, image_stream.getvalue())
+
+            zip_stream.seek(0)
+            zip_blob = Uint8Array.new(zip_stream.getvalue())
+            zip_file = File.new([zip_blob], "processed_images.zip", {type: "application/zip"})
+
+            # Create and insert download link
+            download_link = document.createElement("a")
+            download_link.href = window.URL.createObjectURL(zip_file)
+            download_link.download = "processed_images.zip"
+            download_link.textContent = "Download processed images"
+    else:
+        # Mobile: download each image individually
+       # Store processed images for download
+        processed_images = []
+
+        # Mobile: prepare images and store them
+        output.replaceChildren("Preparing downloads...")
         for index, file in enumerate(file_list):
-            document.getElementById("output_upload_pillow").replaceChildren("Processing ", index+1, " of ", fileCount)
-            array_buf = Uint8Array.new(await file.arrayBuffer())
-            my_bytes = io.BytesIO(bytearray(array_buf))
-            my_image = Image.open(my_bytes)
-
-            # Dynamic size selection
-            selected_size = document.querySelector('input[name="size_select"]:checked')
-            size_value = selected_size.value
-            if size_value == "vertical":
-                finalWidth, finalHeight = 1080, 1350
-            elif size_value == "square":
-                finalWidth, finalHeight = 1080, 1080
-            elif size_value == "landscape":
-                finalWidth, finalHeight = 1080, 566
-            elif size_value == "story":
-                finalWidth, finalHeight = 1080, 1920
-            else:
-                finalWidth, finalHeight = 1080, 1350
-
-            # Get the border width and color
-            borderElement = document.getElementById("borderWidth")
-            finalBorder = int(borderElement.value)
-            selectedColor = document.getElementById("backColor")
-            hexColor = selectedColor.value
-
-            console.log("back color", hexColor)
-            console.log("border size", finalBorder)
-
-            finalCanvasR, finalCanvasG, finalCanvasB = hexToRGB(hexColor)
-            final_image = process_image(my_image, finalWidth, finalHeight, finalBorder, finalCanvasR, finalCanvasG, finalCanvasB)
-
-            # Save processed image to zip buffer
+            final_image = await process_and_resize(file, index)
             image_stream = io.BytesIO()
             final_image.save(image_stream, format="PNG")
-            image_name = f"processed_image_{index+1}.png"
-            zipf.writestr(image_name, image_stream.getvalue())
+            image_bytes = image_stream.getvalue()
+            processed_images.append((image_bytes, f"processed_image_{index+1}.png"))
 
-    zip_stream.seek(0)
-    zip_blob = Uint8Array.new(zip_stream.getvalue())
-    zip_file = File.new([zip_blob], "processed_images.zip", {type: "application/zip"})
+        # Create "Download All" button
+        output.replaceChildren("")  # Clear previous content once downloads are ready
+        download_all_btn = document.createElement("button")
+        download_all_btn.textContent = "Download All Images"
+        output.appendChild(download_all_btn)
 
-    # Create and insert download link
-    download_link = document.createElement("a")
-    download_link.href = window.URL.createObjectURL(zip_file)
-    download_link.download = "processed_images.zip"
-    download_link.textContent = "Download processed images"
-    document.getElementById("output_upload_pillow").replaceChildren(download_link)
+        # Define download function
+        def download_all_images(event=None):
+            from js import Blob, URL
+            for image_bytes, filename in processed_images:
+                blob = Blob.new([to_js(image_bytes)], { "type": "image/png" })
+                url = URL.createObjectURL(blob)
+                link = document.createElement("a")
+                link.href = url
+                link.download = filename
+                document.body.appendChild(link)
+                link.click()
+                document.body.removeChild(link)
+                URL.revokeObjectURL(url)
+
+        # Attach event listener
+        download_all_btn.addEventListener("click", create_proxy(download_all_images))
+
+            
+# Process single image and return processed image
+async def process_and_resize(file, index):
+    from PIL import Image
+    array_buf = Uint8Array.new(await file.arrayBuffer())
+    my_bytes = io.BytesIO(bytearray(array_buf))
+    my_image = Image.open(my_bytes)
+
+    selected_size = document.querySelector('input[name="size_select"]:checked')
+    size_value = selected_size.value
+    size_map = {
+        "vertical": (1080, 1350),
+        "square": (1080, 1080),
+        "landscape": (1080, 566),
+        "story": (1080, 1920)
+    }
+    finalWidth, finalHeight = size_map.get(size_value, (1080, 1350))
+
+    finalBorder = int(document.getElementById("borderWidth").value)
+    hexColor = document.getElementById("backColor").value
+    finalCanvasR, finalCanvasG, finalCanvasB = hexToRGB(hexColor)
+
+    return process_image(my_image, finalWidth, finalHeight, finalBorder, finalCanvasR, finalCanvasG, finalCanvasB)
+
 
 
 # Resizing logic
