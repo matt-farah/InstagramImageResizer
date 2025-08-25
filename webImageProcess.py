@@ -13,15 +13,6 @@ async def setup():
 
 asyncio.ensure_future(setup())
 
-# Install packages for offline use
-async def install_packages():
-    status = document.getElementById("status")
-    status.innerText = "Installing Python packages..."
-    await micropip.install(["pillow"])
-    status.innerText = "Packages installed!"
-
-window.triggerPyInstall = create_proxy(install_packages)
-
 async def _upload_change_and_zip(file_input):
     from PIL import Image
     from pyodide.ffi import to_js
