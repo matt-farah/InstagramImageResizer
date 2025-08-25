@@ -1,4 +1,4 @@
-// sw.js
+// sw.js 
 self.addEventListener('install', event => {
   event.waitUntil(
     caches.open('imgproc-cache').then(cache => {
