@@ -51,15 +51,21 @@ async def _upload_change_and_zip(file_input):
                 image_name = f"processed_image_{index+1}.png"
                 zipf.writestr(image_name, image_stream.getvalue())
 
-            zip_stream.seek(0)
-            zip_blob = Uint8Array.new(zip_stream.getvalue())
-            zip_file = File.new([zip_blob], "processed_images.zip", {type: "application/zip"})
+        # After the zip is finalized
+        zip_stream.seek(0)
+        zip_blob = Uint8Array.new(zip_stream.getvalue())
+        zip_file = File.new([zip_blob], "processed_images.zip", {type: "application/zip"})
 
-            # Create and insert download link
-            download_link = document.createElement("a")
-            download_link.href = window.URL.createObjectURL(zip_file)
-            download_link.download = "processed_images.zip"
-            download_link.textContent = "Download processed images"
+        download_link = document.createElement("a")
+        download_link.href = window.URL.createObjectURL(zip_file)
+        download_link.download = "processed_images.zip"
+        download_link.textContent = "Download processed images"
+
+        output = document.getElementById("output_upload_pillow")
+        console.log("processing complete, ready for download link: ", download_link)
+        output.replaceChildren(download_link)
+
+
     else:
         # Mobile: download each image individually
        # Store processed images for download
