@@ -97,7 +97,7 @@ async def _upload_change_and_zip(file_input):
         # Attach event listener
         download_all_btn.addEventListener("click", create_proxy(download_all_images))
 
-            
+             
 # Process single image and return processed image
 async def process_and_resize(file, index):
     from PIL import Image
