@@ -93,6 +93,13 @@
             navigator.serviceWorker.register('./sw.js');
         }
     </script>   
+    <!-- Detect whether mobile or desktop-->
+     <script>
+        function isMobile() {
+            return /Mobi|Android|iPhone|iPad|iPod/i.test(navigator.userAgent);
+        }
+    </script>
+
 
 </body>
 </html>
