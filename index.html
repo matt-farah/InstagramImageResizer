@@ -138,6 +138,14 @@
     <py-config>
         packages = ["pillow"]
     </py-config>
-    <script type="py" src="./webImpageProcess.py"></script>
+    <script type="py" src="./webImageProcess.py"></script>
+
+    <!-- Service Worker Script -->
+     <script>
+        if ('serviceWorker' in navigator) {
+            navigator.serviceWorker.register('./sw.js');
+        }
+    </script>   
+
 </body>
 </html>
