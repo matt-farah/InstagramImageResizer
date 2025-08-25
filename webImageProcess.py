@@ -37,21 +37,29 @@ async def _upload_change_and_zip(file_input):
 
 
     if not is_mobile:
+        console.log("Desktop detected, creating zip")
         zip_stream = io.BytesIO()
 
         # Create an in-memory zip archive
         with zipfile.ZipFile(zip_stream, mode="w", compression=zipfile.ZIP_DEFLATED) as zipf:
             for index, file in enumerate(file_list):
                 document.getElementById("output_upload_pillow").replaceChildren("Processing ", index+1, " of ", fileCount)
+                console.log("Processing file: ", file.name)
                 # Save processed image to zip buffer
-                final_image = await process_and_resize(file, index)
+                try:
+                    final_image = await process_and_resize(file, index)
+                except Exception as e:
+                    console.log(f"Error processing image {index+1}: {str(e)}")
+                    continue
                 # Save processed image to zip buffer
                 image_stream = io.BytesIO()
                 final_image.save(image_stream, format="PNG")
                 image_name = f"processed_image_{index+1}.png"
+                console.log("Adding to zip: ", image_name)
                 zipf.writestr(image_name, image_stream.getvalue())
 
         # After the zip is finalized
+        console.log("Finalizing zip and preparing download link")
         zip_stream.seek(0)
         zip_blob = Uint8Array.new(zip_stream.getvalue())
         zip_file = File.new([zip_blob], "processed_images.zip", {type: "application/zip"})
@@ -67,6 +75,7 @@ async def _upload_change_and_zip(file_input):
 
 
     else:
+        console.log("Mobile detected, preparing individual downloads")
         # Mobile: download each image individually
        # Store processed images for download
         processed_images = []
