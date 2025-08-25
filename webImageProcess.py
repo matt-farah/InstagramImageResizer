@@ -82,17 +82,24 @@ async def _upload_change_and_zip(file_input):
 
         # Define download function
         def download_all_images(event=None):
-            from js import Blob, URL
-            for image_bytes, filename in processed_images:
-                blob = Blob.new([to_js(image_bytes)], { "type": "image/png" })
-                url = URL.createObjectURL(blob)
-                link = document.createElement("a")
-                link.href = url
-                link.download = filename
-                document.body.appendChild(link)
-                link.click()
-                document.body.removeChild(link)
-                URL.revokeObjectURL(url)
+            def schedule_download(index):
+                if index >= len(processed_images):
+                    return
+                from js import Blob, URL
+                for image_bytes, filename in processed_images:
+                    blob = Blob.new([to_js(image_bytes)], { "type": "image/png" })
+                    url = URL.createObjectURL(blob)
+                    link = document.createElement("a")
+                    link.href = url
+                    link.download = filename
+                    link.target = "_blank" # Helps with iOS
+                    document.body.appendChild(link)
+                    link.click()
+                    document.body.removeChild(link)
+                    URL.revokeObjectURL(url)
+                # Schedule next download
+                window.setTimeout(lambda: schedule_download(index + 1), 500)  #Set a 500ms delay between downloads
+            schedule_download(0)
 
         # Attach event listener
         download_all_btn.addEventListener("click", create_proxy(download_all_images))
