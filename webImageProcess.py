@@ -22,7 +22,7 @@ async def install_packages():
 
 window.triggerPyInstall = create_proxy(install_packages)
 
-async def _upload_change_and_zip(file_input):
+async def processAndOutputFiles(file_input):
     from PIL import Image
     from pyodide.ffi import to_js
 
@@ -30,6 +30,8 @@ async def _upload_change_and_zip(file_input):
     fileCount = file_input.files.length
     user_agent = navigator.userAgent
     is_mobile = any(keyword in user_agent for keyword in ["Mobi", "Android", "iPhone", "iPad", "iPod"])
+    is_ios_safari = "Safari" in user_agent and "Mobile" in user_agent and "Chrome" not in user_agent
+
 
 
     output = document.getElementById("output_upload_pillow")
@@ -73,6 +75,40 @@ async def _upload_change_and_zip(file_input):
         console.log("processing complete, ready for download link: ", download_link)
         output.replaceChildren(download_link)
 
+    elif is_ios_safari:
+        console.log("iOS Safari detected, preparing individual downloads")
+        # iOS Safari: download each image individually
+        # Store processed images for download
+        processed_images = []   
+        # iOS Safari: prepare images and store them
+
+        # Mobile: prepare images and store them
+        output.replaceChildren("Preparing downloads...")
+        for index, file in enumerate(file_list):
+            final_image = await process_and_resize(file, index)
+            image_stream = io.BytesIO()
+            final_image.save(image_stream, format="PNG")
+            image_bytes = image_stream.getvalue()
+            processed_images.append((image_bytes, f"processed_image_{index+1}.png"))
+
+        for index, (image_bytes, filename) in enumerate(processed_images):
+            blob = Blob.new([to_js(image_bytes)], { "type": "image/png" })
+            url = URL.createObjectURL(blob)
+
+            img = document.createElement("img")
+            img.src = url
+            img.style.maxWidth = "100%"
+            img.alt = filename
+
+            save_btn = document.createElement("a")
+            save_btn.href = url
+            save_btn.download = filename
+            save_btn.textContent = f"Save Image {index+1}"
+            save_btn.style.display = "block"
+            save_btn.style.marginBottom = "1em"
+
+            output.appendChild(img)
+            output.appendChild(save_btn)
 
     else:
         console.log("Mobile detected, preparing individual downloads")
@@ -171,7 +207,7 @@ async def on_form_submit(e):
     if file_input.files.length == 0:
         console.log("No files selected")
         return
-    await _upload_change_and_zip(file_input)
+    await processAndOutputFiles(file_input)
 
 def hexToRGB(hex_str):
     hex_str = hex_str.lstrip("#")
