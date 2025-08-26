@@ -158,10 +158,11 @@ async def processAndOutputFiles(file_input):
              
 # Process single image and return processed image
 async def process_and_resize(file, index):
-    from PIL import Image
+    from PIL import Image, ImageOps
     array_buf = Uint8Array.new(await file.arrayBuffer())
     my_bytes = io.BytesIO(bytearray(array_buf))
     my_image = Image.open(my_bytes)
+    my_image = ImageOps.exif_transpose(my_image)
 
     selected_size = document.querySelector('input[name="size_select"]:checked')
     size_value = selected_size.value
