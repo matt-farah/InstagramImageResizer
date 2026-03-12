@@ -32,11 +32,8 @@ async def processAndOutputFiles(file_input):
     is_mobile = any(keyword in user_agent for keyword in ["Mobi", "Android", "iPhone", "iPad", "iPod"])
     is_ios_safari = "Safari" in user_agent and "Mobile" in user_agent and "Chrome" not in user_agent
 
-
-
     output = document.getElementById("output_upload_pillow")
     output.replaceChildren("Processing...")
-
 
     if not is_mobile:
         console.log("Desktop detected, creating zip")
@@ -154,6 +151,7 @@ async def processAndOutputFiles(file_input):
 
         # Attach event listener
         download_all_btn.addEventListener("click", create_proxy(download_all_images))
+
 
              
 # Process single image and return processed image
